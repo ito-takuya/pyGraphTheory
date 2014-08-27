@@ -47,9 +47,9 @@ def threshold_proportional(W, p):
 	###
 	# Sort connection strengths (doesn't absolute value connections)! If only interested for absolute values, absolute value matrix prior to input.
 	# Reshape connection strengths to 1d array
-	reshapeMat = fzCorrMat.reshape(-1).copy()
+	reshapeMat = W.reshape(-1).copy()
 	# Enumerate connections
-	indices = np.arange(len(fzCorrMat)**2)
+	indices = np.arange(len(W)**2)
 	# Stack indices and connection values horizontally
 	sortTuple = np.column_stack((indices, reshapeMat))
 	# Sort in descending order
