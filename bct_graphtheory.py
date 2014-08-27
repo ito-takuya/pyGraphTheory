@@ -11,6 +11,8 @@ Rubinov M, Sporns O (2010) NeuroImage 52:1059-69.
 Web address: http://www.brain-connectivity-toolbox.net
 """
 
+import numpy as np
+
 def threshold_proportional(W, p):
 	"""
 	Original BCT MatLab description:
