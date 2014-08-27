@@ -1,7 +1,7 @@
 # Taku Ito
 # 08/26/2014
 """
-Python version of threshold_proportional.m from Brain Connectivity Toolbox.
+Python implementation of some graph-theoretic measures modeled after the Brain Connectivity Toolbox.
 Original MatLab implementation found:
 https://github.com/fieldtrip/fieldtrip/blob/master/external/bct/
 
@@ -13,6 +13,8 @@ Web address: http://www.brain-connectivity-toolbox.net
 
 def threshold_proportional(W, p):
 	"""
+	Original BCT MatLab description:
+
 	THRESHOLD_PROPORTIONAL     Proportional thresholding
 
 	W_thr = threshold_proportional(W, p);
@@ -30,6 +32,8 @@ def threshold_proportional(W, p):
 
 
 	Mika Rubinov, UNSW, 2010
+
+	Python Implementation: Taku Ito, 2014
 	"""
 
 	# Get number of nodes
@@ -59,10 +63,48 @@ def threshold_proportional(W, p):
 	# Set throwout connections to 0
 	reshapeMat[throwout] = 0
 	# Reshape back to symmetric matrix
-
+	tW = reshapeMat.reshape(n,n)
 
 	# Verify that matrix is still symmetric
 	if (tW.transpose() != tW).all() == True:
 		raise Exception('Something is wrong! Matrix not symmetric.')
 
 	return tW
+
+
+def strengths_und_sign(W):
+	"""
+	Original BCT MatLab description:
+
+	STRENGTHS_UND_SIGN        Strength and weight
+ 
+    [Spos Sneg] = strengths_und_sign(W);
+    [Spos Sneg vpos vneg] = strengths_und_sign(W);
+ 
+    Node strength is the sum of weights of links connected to the node.
+ 
+    Inputs:     W,              undirected connection matrix with positive
+                                and negative weights
+ 
+    Output:     Spos/Sneg,      nodal strength of positive/negative weights
+                vpos/vneg,      total positive/negative weight
+ 
+ 
+    2011, Mika Rubinov, UNSW
+
+	Python Implementation: Taku Ito, 2014
+
+	"""
+
+	# Number of nodes
+	n = length(W)
+
+	# Clear Diagonal
+	np.fill_diagonal(W, 0)
+	Spos = np.sum(np.multiply(W,W>0),axis=0)
+	Sneg = np.sum(np.multiply(W,W<0),axis=0)
+
+	vpos = np.sum(Spos)
+	vneg = np.sum(Sneg)
+
+	return Spos, Sneg, vpos, vneg
