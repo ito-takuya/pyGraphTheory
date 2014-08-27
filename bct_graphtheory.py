@@ -97,7 +97,7 @@ def strengths_und_sign(W):
 	"""
 
 	# Number of nodes
-	n = length(W)
+	n = len(W)
 
 	# Clear Diagonal
 	np.fill_diagonal(W, 0)
