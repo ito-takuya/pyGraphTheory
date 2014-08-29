@@ -110,3 +110,58 @@ def strengths_und_sign(W):
 	vneg = np.sum(Sneg)
 
 	return Spos, Sneg, vpos, vneg
+
+
+def betweenness_wei(G, invert=False):
+	"""
+	BETWEENNESS_WEI    Node betweenness centrality
+ 
+    BC = betweenness_wei(W);
+ 
+    Node betweenness centrality is the fraction of all shortest paths in 
+    the network that contain a given node. Nodes with high values of 
+    betweenness centrality participate in a large number of shortest paths.
+ 
+    Input:      W,      weighted (directed/undirected) connection matrix.
+    			keyword arguments:
+    				invert : default False. If True, invert graph weights.
+ 
+    Output:     BC,     node betweenness centrality vector.
+ 
+    Notes:
+        The input matrix must be a mapping from weight to distance. For 
+    instance, in a weighted correlation network, higher correlations are 
+    more naturally interpreted as shorter distances, and the input matrix 
+    should consequently be some inverse of the connectivity matrix.
+        Betweenness centrality may be normalised to [0,1] via BC/[(N-1)(N-2)]
+ 
+    Reference: Brandes (2001) J Math Sociol 25:163-177.
+ 
+ 
+    Mika Rubinov, UNSW, 2007-2010
+
+    Python Implementation: Taku Ito, 2014
+	"""
+
+	n = len(G)
+	if invert==True: # Invert weights
+		E = np.where(E)
+		G[E] = np.divide(1.0,G[E])
+	BC = np.zeros(shape=(n,1)) 	# Vertex betweenness
+
+	for u in range(n):
+		# distance from u
+		D = np.ndarray(shape=(1,n))
+		D.fill(np.inf) 
+		# number of paths from u
+		NP = np.zeros(shape=(1,n)) 
+		# distance permanence (true is temporary)
+		S = np.ndarray(shape=(1,n))
+		S.fill(True)
+		# predecessors
+		P = np.ndarray(shape=(n))
+		P.fill(False)
+		# Order of non-increasing distance
+		Q = np.zeros(shape=(1,n))
+
+
