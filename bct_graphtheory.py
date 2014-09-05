@@ -104,7 +104,7 @@ def strengths_und_sign(W):
 	# Clear Diagonal
 	np.fill_diagonal(W, 0)
 	Spos = np.sum(np.multiply(W,W>0),axis=0)
-	Sneg = np.sum(np.multiply(W,W<0),axis=0)
+	Sneg = np.sum(np.multiply(-W,W<0),axis=0)
 
 	vpos = np.sum(Spos)
 	vneg = np.sum(Sneg)
