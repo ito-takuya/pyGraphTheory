@@ -112,6 +112,43 @@ def strengths_und_sign(W):
 	return Spos, Sneg, vpos, vneg
 
 
+
+
+
+def participation_coef(W, Ci):
+	"""
+	Participation Coefficient
+
+	Python Translation of Original MatLab Code by Brain Connectivity Toolbox
+
+	Original MatLab source: https://github.com/fieldtrip/fieldtrip/blob/master/external/bct/participation_coef.m
+
+	Reference: Guimera R, Amaral L. Nature (2005) 433:895-900.
+	and 
+	Complex network measures of brain connectivity: Uses and interpretations.
+	Rubinov M, Sporns O (2010) NeuroImage 52:1059-69.
+
+	Inputs : 	W, binary/weighted, directed/undirected connection matrix
+				Ci, community affiliation vector
+
+	Output: P, 	participation coefficient
+	"""
+
+	n = len(W)			# Number of vertices
+	Ko = np.sum(W,1)	# Calculate (out) degree
+	Gc = np.dot((W != 0),np.diag(Ci))		# neighbor community affiliation
+	Kc2 = np.zeros(shape=(n,))				# Community-specific neighbors
+
+	for i in range(int(np.max(Ci))):
+		Kc2 += np.sum(np.multiply(W, (Gc==i)), 1)**2
+
+	P = np.ones(shape=(n,)) - np.divide(Kc2, np.square(Ko))
+	#rows, cols = np.where()
+
+	return P
+
+
+
 def betweenness_wei(G, invert=False):
 	"""
 	BETWEENNESS_WEI    Node betweenness centrality
