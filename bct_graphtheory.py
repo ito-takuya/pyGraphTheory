@@ -9,9 +9,11 @@ https://github.com/fieldtrip/fieldtrip/blob/master/external/bct/
 Complex network measures of brain connectivity: Uses and interpretations.
 Rubinov M, Sporns O (2010) NeuroImage 52:1059-69.
 Web address: http://www.brain-connectivity-toolbox.net
+
 """
 
 import numpy as np
+import networkx as nx
 
 def threshold_proportional(W, p):
 	"""
@@ -149,56 +151,39 @@ def participation_coef(W, Ci):
 
 
 
-def betweenness_wei(G, invert=False):
-	"""
-	BETWEENNESS_WEI    Node betweenness centrality
- 
-    BC = betweenness_wei(W);
- 
-    Node betweenness centrality is the fraction of all shortest paths in 
-    the network that contain a given node. Nodes with high values of 
-    betweenness centrality participate in a large number of shortest paths.
- 
-    Input:      W,      weighted (directed/undirected) connection matrix.
-    			keyword arguments:
-    				invert : default False. If True, invert graph weights.
- 
-    Output:     BC,     node betweenness centrality vector.
- 
-    Notes:
-        The input matrix must be a mapping from weight to distance. For 
-    instance, in a weighted correlation network, higher correlations are 
-    more naturally interpreted as shorter distances, and the input matrix 
-    should consequently be some inverse of the connectivity matrix.
-        Betweenness centrality may be normalised to [0,1] via BC/[(N-1)(N-2)]
- 
-    Reference: Brandes (2001) J Math Sociol 25:163-177.
- 
- 
-    Mika Rubinov, UNSW, 2007-2010
-
-    Python Implementation: Taku Ito, 2014
-	"""
-
-	n = len(G)
-	if invert==True: # Invert weights
-		E = np.where(E)
-		G[E] = np.divide(1.0,G[E])
-	BC = np.zeros(shape=(n,1)) 	# Vertex betweenness
-
-	for u in range(n):
-		# distance from u
-		D = np.ndarray(shape=(1,n))
-		D.fill(np.inf) 
-		# number of paths from u
-		NP = np.zeros(shape=(1,n)) 
-		# distance permanence (true is temporary)
-		S = np.ndarray(shape=(1,n))
-		S.fill(True)
-		# predecessors
-		P = np.ndarray(shape=(n))
-		P.fill(False)
-		# Order of non-increasing distance
-		Q = np.zeros(shape=(1,n))
 
 
+def eigenvectorCentrality(matrix):
+    """
+    Eigenvector Centrality, using networkX implementation
+    
+    Input: n x n symmetric matrix
+    Outputs: Array of eigenvector centrality scores for each node, and a second array which returns the sorted order of top highest ranking nodes with eigenvector centrality
+    
+    """
+
+    G = nx.Graph(data=matrix)
+    eig_cent = nx.eigenvector_centrality(G)
+    eigArray = eig_cent.values()
+    sortedarray = np.asarray(sorted(range(len(eigArray)), key=lambda k: -eigArray[k]))
+
+    return eigArray, sortedarray
+
+def closenessCentrality(matrix):
+    """
+    Closeness centrality, using NetworkX implementation
+    Outputs: Array of closeness centrality scores for each node, and a second array which returns the sorted order of top highest ranking nodes with closeness centrality
+    """
+
+    # need to invert matrix since closeness is computed as a function of edge lengths
+    np.fill_diagonal(1, matrix)
+    invMat = np.divide(1,matrix)
+
+    G = nx.Graph(data=invMat)
+    # returns a dict of nodes and their associated scores
+    scoreArray = nx.closeness_centrality(G)
+    scoreArray = scoreArray.values()
+    # return ordering from highest node to lowest node score
+    sortedArray = np.asarray(sorted(range(len(scoreArray)), key=lambda k: -scoreArray[k]))
+
+    return scoreArray, sortedArray
