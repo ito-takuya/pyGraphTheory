@@ -2,10 +2,15 @@
 # 08/26/2014
 """
 Python implementation of some graph-theoretic measures modeled after the Brain Connectivity Toolbox.
-Original MatLab implementation found:
+
+While most functions were 'translated' into Python based on BCT-MATLAB, there are a couple functions which use NetworkX. All functions that are translated from the original BCT-MATLAB implementation are specified.
+
+Original MATLAB implementation found:
 https://github.com/fieldtrip/fieldtrip/blob/master/external/bct/
 
+This program is free software under the terms of the GNU General Public license. 
 
+Original MATLAB description:
 Complex network measures of brain connectivity: Uses and interpretations.
 Rubinov M, Sporns O (2010) NeuroImage 52:1059-69.
 Web address: http://www.brain-connectivity-toolbox.net
@@ -17,7 +22,7 @@ import networkx as nx
 
 def threshold_proportional(W, p):
 	"""
-	Original BCT MatLab description:
+	Original BCT MATLAB description:
 
 	THRESHOLD_PROPORTIONAL     Proportional thresholding
 
@@ -164,7 +169,7 @@ def eigenvectorCentrality(matrix):
 
     G = nx.Graph(data=matrix)
     eig_cent = nx.eigenvector_centrality(G)
-    eigArray = eig_cent.values()
+    eigArray = np.asarray(eig_cent.values())
     sortedarray = np.asarray(sorted(range(len(eigArray)), key=lambda k: -eigArray[k]))
 
     return eigArray, sortedarray
@@ -176,13 +181,13 @@ def closenessCentrality(matrix):
     """
 
     # need to invert matrix since closeness is computed as a function of edge lengths
-    np.fill_diagonal(1, matrix)
-    invMat = np.divide(1,matrix)
-
+    #np.fill_diagonal(matrix,1)
+    #invMat = np.divide(1,matrix)
+    invMat = matrix
     G = nx.Graph(data=invMat)
     # returns a dict of nodes and their associated scores
     scoreArray = nx.closeness_centrality(G)
-    scoreArray = scoreArray.values()
+    scoreArray = np.asarray(scoreArray.values())
     # return ordering from highest node to lowest node score
     sortedArray = np.asarray(sorted(range(len(scoreArray)), key=lambda k: -scoreArray[k]))
 
